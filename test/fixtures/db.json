@@ -1,0 +1,42 @@
+{
+  "client": {
+    "id": 1,
+    "clientId": "12345",
+    "clientSecret": "secret",
+    "redirectUris": [
+      "http://example.com"
+    ],
+    "refreshTokenLifetime": 0,
+    "accessTokenLifetime": 0,
+    "grants": [
+      "password"
+    ]
+  },
+  "user": {
+    "id": 1,
+    "username": "foo",
+    "password": "bar"
+  },
+  "token": {
+    "accessToken": "a051f2d3c361bae20b95e0fa6d2b3cb155a97bb4",
+    "accessTokenExpiresAt": "2022-05-31T08:04:49.370Z",
+    "refreshToken": "85cd485e7c3aa15d60a8370a0eb854da2dc7d6c8",
+    "refreshTokenExpiresAt": "2023-05-31T08:04:49.370Z",
+    "user": {
+      "id": 1
+    },
+    "client": {
+      "id": 1,
+      "clientId": "12345",
+      "clientSecret": "secret",
+      "redirectUris": [
+        "http://example.com"
+      ],
+      "refreshTokenLifetime": 0,
+      "accessTokenLifetime": 0,
+      "grants": [
+        "password"
+      ]
+    }
+  }
+}
