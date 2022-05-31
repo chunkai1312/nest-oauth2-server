@@ -1,73 +1,142 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# nest-oauth2-server
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Complete, compliant and well tested module for implementing an OAuth2 Server/Provider with [nest](https://github.com/nestjs/nest) in [node.js](http://nodejs.org/).
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
-
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+This is the nest wrapper for [oauth2-server](https://github.com/oauthjs/node-oauth2-server).
 
 ## Installation
 
-```bash
-$ npm install
-```
-
-## Running the app
+To begin using it, we first install the required dependencies.
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+$ npm install --save nest-oauth2-server oauth2-server
+$ npm install --save-dev @types/oauth2-server
 ```
 
-## Test
+## Quick Start
 
-```bash
-# unit tests
-$ npm run test
+Once the installation process is complete, we can import the `OAuth2ServerModule` into the root `AppModule`.
 
-# e2e tests
-$ npm run test:e2e
+```typescript
+import { Module } from '@nestjs/common';
+import { OAuth2ServerModule } from 'nest-oauth2-server';
+import { OAuthModel } from './oauth.model';
 
-# test coverage
-$ npm run test:cov
+@Module({
+  imports: [
+    OAuth2ServerModule.forRoot({
+      allowBearerTokensInQueryString: true,
+      accessTokenLifetime: 4 * 60 * 60,
+    }),
+  ],
+  providers: [OAuthModel],
+})
+export class AppModule {}
 ```
 
-## Support
+The `forRoot()` method accepts the same configuration object to create a new [OAuth2Server](https://oauth2-server.readthedocs.io/en/latest/api/oauth2-server.html#new-oauth2server-options) instance.
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+[OAuth2Server](https://oauth2-server.readthedocs.io/en/latest/api/oauth2-server.html) requires a [model](https://oauth2-server.readthedocs.io/en/latest/model/overview.html) object through which some aspects or storage, retrieval and custom validation are abstracted. In order to do that, you **MUST** declare the model with `@OAuth2ServerModel` decorator, which can be provided as a service from any part of your application.
 
-## Stay in touch
+```typescript
+import { PasswordModel, Client, User, Token } from 'oauth2-server';
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+@OAuth2ServerModel()
+export class OAuthModel implements PasswordModel {
+  async getClient(clientId: string, clientSecret: string) {}
+  async getUser(username: string, password: string) {}
+  async saveToken(token: Token, client: Client, user: User) {}
+  async getAccessToken(accessToken: string) {}
+  async verifyScope(token: Token, scope: string | string[]) {}
+}
+```
+
+> The [model specification](https://oauth2-server.readthedocs.io/en/latest/model/spec.html) see documentation for details.
+
+The module provides decorators to help you create oauth2 handler endpoints. The following is an example controller for oauth2 server endpoints:
+
+```typescript
+import { Controller, All, Get } from '@nestjs/common';
+import { OAuthAuthenticate, OAuthAuthorize, OAuthToken } from 'nest-oauth2-server';
+
+@Controller('oauth')
+export class OAuthController {
+  @Get('user')
+  @OAuthAuthenticate()
+  user(@OAuth() oauth: any) {
+    return oauth.token.user;
+  }
+
+  @Get('authorize')
+  @OAuthAuthorize()
+  authorize() {}
+
+  @All('token')
+  @OAuthToken()
+  token() {}
+}
+```
+
+## Async configuration
+
+When you need to pass module options asynchronously instead of statically, use the `forRootAsync()` method. As with most dynamic modules, Nest provides several techniques to deal with async configuration.
+
+One technique is to use a factory function:
+
+```typescript
+OAuth2ServerModule.forRootAsync({
+  useFactory: () => ({
+    allowBearerTokensInQueryString: true,
+    accessTokenLifetime: 4 * 60 * 60,
+  }),
+});
+```
+
+Like other factory providers, our factory function can be [async](https://docs.nestjs.com/fundamentals/custom-providers#factory-providers-usefactory) and can inject dependencies through `inject`.
+
+```typescript
+OAuth2ServerModule.forRootAsync({
+  imports: [ConfigModule],
+  useFactory: async (configService: ConfigService) => ({
+    allowBearerTokensInQueryString: true,
+    accessTokenLifetime: +configService.get<number>('ACCESS_TOKEN_LIFETIME'),
+  }),
+  inject: [ConfigService],
+});
+```
+
+Alternatively, you can configure the `OAuth2ServerModule` using a class instead of a factory, as shown below.
+
+```typescript
+OAuth2ServerModule.forRootAsync({
+  useClass: OAuth2ServerConfigService,
+});
+```
+
+The construction above instantiates `OAuth2ServerConfigService` inside `OAuth2ServerModule`, using it to create an options object. Note that in this example, the `OAuth2ServerConfigService` has to implement `OAuth2ServerOptionsFactory` interface as shown below. The `OAuth2ServerModule` will call the `createOAuth2ServerOptions()` method on the instantiated object of the supplied class.
+
+```typescript
+@Injectable()
+class OAuth2ServerConfigService implements OAuth2ServerOptionsFactory {
+  createOAuth2ServerOptions(): OAuth2ServerModuleOptions {
+    return {
+      allowBearerTokensInQueryString: true,
+      accessTokenLifetime: 4 * 60 * 60,
+    };
+  }
+}
+```
+
+If you want to reuse an existing options provider instead of creating a private copy inside the `OAuth2ServerModule`, use the `useExisting` syntax.
+
+```typescript
+OAuth2ServerModule.forRootAsync({
+  imports: [ConfigModule],
+  useExisting: OAuth2ServerConfigService,
+});
+```
+
 
 ## License
 
-Nest is [MIT licensed](LICENSE).
+[MIT](LICENSE)
