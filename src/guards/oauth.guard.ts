@@ -1,13 +1,13 @@
 import * as OAuth2Server from 'oauth2-server';
 import { Inject, Injectable, ExecutionContext, HttpException, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { OAUTH2_SERVER, OAUTH2_SERVER_HANDLER_OPTIONS_METADATA } from '../oauth2-server.constants';
+import { OAUTH2_SERVER_INSTANCE, OAUTH2_SERVER_OPTIONS_METADATA } from '../oauth2-server.constants';
 
 @Injectable()
 export abstract class OAuthGuard {
   @Inject(Reflector) protected readonly reflector!: Reflector;
 
-  @Inject(OAUTH2_SERVER)
+  @Inject(OAUTH2_SERVER_INSTANCE)
   protected readonly oauthServer: OAuth2Server;
 
   canActivate(context: ExecutionContext): Promise<boolean> {
@@ -30,7 +30,7 @@ export abstract class OAuthGuard {
   }
 
   private getOptions<T extends OAuth2Server.TokenOptions | OAuth2Server.AuthorizeOptions | OAuth2Server.AuthenticateOptions>(context: ExecutionContext): T {
-    return this.reflector.get<T, symbol>(OAUTH2_SERVER_HANDLER_OPTIONS_METADATA, context.getHandler());
+    return this.reflector.get<T, symbol>(OAUTH2_SERVER_OPTIONS_METADATA, context.getHandler());
   }
 
   protected handleResponse(context: ExecutionContext, response: OAuth2Server.Response) {
