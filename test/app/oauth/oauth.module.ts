@@ -3,6 +3,7 @@ import * as nconf from 'nconf';
 import { Module } from '@nestjs/common';
 import { OAuthController } from './oauth.controller';
 import { OAuthModel } from './oauth.model';
+import { OAuthConfig } from './oauth.config';
 import { NCONF_INSTANCE_TOKEN } from './constants';
 
 @Module({
@@ -15,6 +16,8 @@ import { NCONF_INSTANCE_TOKEN } from './constants';
       }),
     },
     OAuthModel,
+    OAuthConfig,
   ],
+  exports: [OAuthConfig],
 })
 export class OAuthModule {}

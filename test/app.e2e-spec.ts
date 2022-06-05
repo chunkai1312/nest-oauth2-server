@@ -5,6 +5,7 @@ import { AppModule } from './app/app.module';
 
 describe('Test App', () => {
   let app: INestApplication;
+  let accessToken: string;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -82,6 +83,7 @@ describe('Test App', () => {
       .expect(200)
       .then((res) => {
         expect(res.body.token_type).toBe('Bearer');
+        accessToken = res.body.access_token;
       });
   });
 
@@ -99,7 +101,7 @@ describe('Test App', () => {
     return request(app.getHttpServer())
       .get('/user')
       .set({
-        Authorization: 'Bearer a051f2d3c361bae20b95e0fa6d2b3cb155a97bb4',
+        Authorization: `Bearer ${accessToken}`,
       })
       .expect(200);
   });

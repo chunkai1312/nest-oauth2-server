@@ -1,10 +1,9 @@
-import { Inject } from '@nestjs/common';
-import { OAuth2ServerModel } from '../../../src';
+import { Injectable, Inject } from '@nestjs/common';
 import { PasswordModel, Client, User, Token } from 'oauth2-server';
 import { Provider } from 'nconf';
 import { NCONF_INSTANCE_TOKEN } from './constants';
 
-@OAuth2ServerModel()
+@Injectable()
 export class OAuthModel implements PasswordModel {
   constructor(
     @Inject(NCONF_INSTANCE_TOKEN)
@@ -33,9 +32,6 @@ export class OAuthModel implements PasswordModel {
 
   async getAccessToken(bearerToken: string) {
     const token = this.nconf.get('token');
-    if (bearerToken !== token.accessToken) {
-      return;
-    }
     token.accessTokenExpiresAt = new Date(token.accessTokenExpiresAt);
     token.refreshTokenExpiresAt = new Date(token.refreshTokenExpiresAt);
     const user = this.nconf.get('user');
