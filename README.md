@@ -1,8 +1,11 @@
 # nest-oauth2-server
 
-Complete, compliant and well tested module for implementing an OAuth2 Server/Provider with [nest](https://github.com/nestjs/nest) in [node.js](http://nodejs.org/).
+[![NPM version][npm-image]][npm-url]
+[![Build Status][action-image]][action-url]
 
-This is the nest wrapper for [oauth2-server](https://github.com/oauthjs/node-oauth2-server).
+Complete, compliant and well tested module for implementing an OAuth2 server with [Nest](https://github.com/nestjs/nest) in [Node.js](https://nodejs.org).
+
+This is the Nest module wrapper for [oauth2-server](https://github.com/oauthjs/node-oauth2-server).
 
 ## Installation
 
@@ -127,3 +130,8 @@ A working example is available in [test](./test/app/) directory.
 ## License
 
 [MIT](LICENSE)
+
+[npm-image]: https://img.shields.io/npm/v/nest-oauth2-server.svg
+[npm-url]: https://npmjs.com/package/nest-oauth2-server
+[action-image]: https://img.shields.io/github/workflow/status/chunkai1312/nest-oauth2-server/Node.js%20CI
+[action-url]: https://github.com/chunkai1312/nest-oauth2-server/actions/workflows/node.js.yml
