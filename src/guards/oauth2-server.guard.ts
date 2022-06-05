@@ -4,7 +4,7 @@ import { Reflector } from '@nestjs/core';
 import { OAUTH2_SERVER_INSTANCE, OAUTH2_SERVER_OPTIONS_METADATA } from '../oauth2-server.constants';
 
 @Injectable()
-export abstract class OAuthGuard {
+export abstract class OAuth2ServerGuard {
   @Inject(Reflector) protected readonly reflector!: Reflector;
 
   @Inject(OAUTH2_SERVER_INSTANCE)

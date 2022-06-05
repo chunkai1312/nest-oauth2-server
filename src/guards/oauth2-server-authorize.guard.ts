@@ -1,9 +1,9 @@
 import * as OAuth2Server from 'oauth2-server';
 import { ExecutionContext, Injectable } from '@nestjs/common';
-import { OAuthGuard } from './oauth.guard';
+import { OAuth2ServerGuard } from './oauth2-server.guard';
 
 @Injectable()
-export class OAuthAuthorizeGuard extends OAuthGuard {
+export class OAuth2ServerAuthorizeGuard extends OAuth2ServerGuard {
   protected async execute(context: ExecutionContext, request: OAuth2Server.Request, response: OAuth2Server.Response, options?: OAuth2Server.AuthorizeOptions): Promise<boolean> {
     try {
       const code = await this.oauthServer.authorize(request, response, options);
