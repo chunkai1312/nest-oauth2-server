@@ -1,9 +1,9 @@
 import { Controller, All } from '@nestjs/common';
-import { OAuthToken } from '../../../src';
+import { OAuth2ServerToken } from '../../../src';
 
 @Controller('oauth')
 export class OAuthController {
   @All('token')
-  @OAuthToken({})
+  @OAuth2ServerToken({})
   token() {}
 }
