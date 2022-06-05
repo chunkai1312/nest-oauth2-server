@@ -13,43 +13,28 @@ $ npm install --save nest-oauth2-server oauth2-server
 $ npm install --save-dev @types/oauth2-server
 ```
 
-## Quick Start
+## Getting started
 
 Once the installation process is complete, we can import the `OAuth2ServerModule` into the root `AppModule`.
 
 ```typescript
 import { Module } from '@nestjs/common';
 import { OAuth2ServerModule } from 'nest-oauth2-server';
-import { OAuthModel } from './oauth.model';
+import { model } from './model';
 
 @Module({
   imports: [
     OAuth2ServerModule.forRoot({
-      allowBearerTokensInQueryString: true,
-      accessTokenLifetime: 4 * 60 * 60,
+      model: model
     }),
   ],
-  providers: [OAuthModel],
 })
 export class AppModule {}
 ```
 
 The `forRoot()` method accepts the same configuration object to create a new [OAuth2Server](https://oauth2-server.readthedocs.io/en/latest/api/oauth2-server.html#new-oauth2server-options) instance.
 
-[OAuth2Server](https://oauth2-server.readthedocs.io/en/latest/api/oauth2-server.html) requires a [model](https://oauth2-server.readthedocs.io/en/latest/model/overview.html) object through which some aspects or storage, retrieval and custom validation are abstracted. In order to do that, you **MUST** declare the model with `@OAuth2ServerModel` decorator, which can be provided as a service from any part of your application.
-
-```typescript
-import { PasswordModel, Client, User, Token } from 'oauth2-server';
-
-@OAuth2ServerModel()
-export class OAuthModel implements PasswordModel {
-  async getClient(clientId: string, clientSecret: string) {}
-  async getUser(username: string, password: string) {}
-  async saveToken(token: Token, client: Client, user: User) {}
-  async getAccessToken(accessToken: string) {}
-  async verifyScope(token: Token, scope: string | string[]) {}
-}
-```
+Note that [OAuth2Server](https://oauth2-server.readthedocs.io/en/latest/api/oauth2-server.html) requires a [model](https://oauth2-server.readthedocs.io/en/latest/model/overview.html) object through which some aspects or storage, retrieval and custom validation are abstracted. Therefore, in most cases you will need to use [async configuration](#async-configuration) to import your repository module for the model implementation.
 
 > The [model specification](https://oauth2-server.readthedocs.io/en/latest/model/spec.html) see documentation for details.
 
@@ -86,8 +71,7 @@ One technique is to use a factory function:
 ```typescript
 OAuth2ServerModule.forRootAsync({
   useFactory: () => ({
-    allowBearerTokensInQueryString: true,
-    accessTokenLifetime: 4 * 60 * 60,
+    model: model,
   }),
 });
 ```
@@ -96,12 +80,11 @@ Like other factory providers, our factory function can be [async](https://docs.n
 
 ```typescript
 OAuth2ServerModule.forRootAsync({
-  imports: [ConfigModule],
-  useFactory: async (configService: ConfigService) => ({
-    allowBearerTokensInQueryString: true,
-    accessTokenLifetime: +configService.get<number>('ACCESS_TOKEN_LIFETIME'),
+  imports: [OAuthModule],
+  useFactory: async (model: OAuth2ServerModel) => ({
+    model: model
   }),
-  inject: [ConfigService],
+  inject: [OAuth2ServerModel],
 });
 ```
 
@@ -118,10 +101,11 @@ The construction above instantiates `OAuth2ServerConfigService` inside `OAuth2Se
 ```typescript
 @Injectable()
 class OAuth2ServerConfigService implements OAuth2ServerOptionsFactory {
+  constructor(private readonly model: OAuth2ServerModel) {}
+
   createOAuth2ServerOptions(): OAuth2ServerModuleOptions {
     return {
-      allowBearerTokensInQueryString: true,
-      accessTokenLifetime: 4 * 60 * 60,
+      model: this.model,
     };
   }
 }
@@ -136,6 +120,9 @@ OAuth2ServerModule.forRootAsync({
 });
 ```
 
+## Example
+
+A working example is available in [test](./test/app/) directory.
 
 ## License
 
