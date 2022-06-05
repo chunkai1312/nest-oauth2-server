@@ -41,26 +41,40 @@ Note that [OAuth2Server](https://oauth2-server.readthedocs.io/en/latest/api/oaut
 
 > The [model specification](https://oauth2-server.readthedocs.io/en/latest/model/spec.html) see documentation for details.
 
-The module provides decorators to help you create oauth2 handler endpoints. The following is an example controller for oauth2 server endpoints:
+## Decorators
+
+The module provides decorators to help you create `OAuth2Server` handlers (endpoints). 
+
+|  Decorator                                                  | `OAuth2Server` handler        |
+| ----------------------------------------------------------- | ----------------------------- |
+| `@OAuth2ServerAuthenticate(options?: AuthenticateOptions)`  | `OAuth2Server#authenticate()` |
+| `@OAuth2ServerAuthorize(options?: AuthorizeOptions)`        | `OAuth2Server#authorize()`    |
+| `@OAuth2ServerToken(options?: TokenOptions)`                | `OAuth2Server#token()`        |
+
+Any valid option for `@OAuth2ServerAuthenticate()`, `@OAuth2ServerAuthorize()` and `@OAuth2ServerToken()` can be passed to the `OAuth2ServerModule.forRoot()` method as well. The supplied options will be used as default for the other methods.
+
+In addition, we provide the `@OAuth2ServerOAuth()` decorator lets you retrieve oauth information from the `res.locals.oauth` property.
+
+The following is an example controller for oauth2 server endpoints:
 
 ```typescript
-import { Controller, All, Get } from '@nestjs/common';
+import { Controller, Get, Post } from '@nestjs/common';
 import { OAuthAuthenticate, OAuthAuthorize, OAuthToken } from 'nest-oauth2-server';
 
 @Controller('oauth')
 export class OAuthController {
   @Get('user')
-  @OAuthAuthenticate()
-  user(@OAuth() oauth: any) {
+  @OAuth2ServerAuthenticate()
+  user(@OAuth2ServerOAuth() oauth: any) {
     return oauth.token.user;
   }
 
   @Get('authorize')
-  @OAuthAuthorize()
+  @OAuth2ServerAuthorize()
   authorize() {}
 
-  @All('token')
-  @OAuthToken()
+  @Post('token')
+  @OAuth2ServerToken()
   token() {}
 }
 ```
