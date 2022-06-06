@@ -1,11 +1,11 @@
 import { Controller, Get, Post } from '@nestjs/common';
-import { OAuth2ServerAuthenticate, OAuth2ServerAuthorize, OAuth2ServerToken, OAuth2ServerOAuth } from '../../../src';
+import { OAuth2ServerAuthenticate, OAuth2ServerAuthorize, OAuth2ServerToken, OAuth2ServerOAuth, OAuth } from '../../../src';
 
 @Controller('oauth')
 export class OAuthController {
   @Get('user')
   @OAuth2ServerAuthenticate()
-  user(@OAuth2ServerOAuth() oauth: any) {
+  user(@OAuth2ServerOAuth() oauth: OAuth) {
     return oauth.token.user;
   }
 
