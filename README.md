@@ -59,7 +59,7 @@ The following is an example controller for oauth2 server endpoints:
 
 ```typescript
 import { Controller, Get, Post } from '@nestjs/common';
-import { OAuthAuthenticate, OAuthAuthorize, OAuthToken } from 'nest-oauth2-server';
+import { OAuthAuthenticate, OAuthAuthorize, OAuthToken, OAuth2ServerOAuth } from 'nest-oauth2-server';
 
 @Controller('oauth')
 export class OAuthController {
