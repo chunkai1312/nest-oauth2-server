@@ -1,23 +1,10 @@
-import * as path from 'path';
-import * as nconf from 'nconf';
 import { Module } from '@nestjs/common';
 import { OAuthController } from './oauth.controller';
 import { OAuthModel } from './oauth.model';
-import { OAuthConfig } from './oauth.config';
-import { NCONF_INSTANCE_TOKEN } from './constants';
 
 @Module({
   controllers: [OAuthController],
-  providers: [
-    {
-      provide: NCONF_INSTANCE_TOKEN,
-      useValue: nconf.use('file', {
-        file: path.resolve(__dirname, '../../fixtures/db.json'),
-      }),
-    },
-    OAuthModel,
-    OAuthConfig,
-  ],
-  exports: [OAuthConfig],
+  providers: [OAuthModel],
+  exports: [OAuthModel],
 })
 export class OAuthModule {}

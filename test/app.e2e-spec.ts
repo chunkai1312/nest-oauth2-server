@@ -5,7 +5,6 @@ import { AppModule } from './app/app.module';
 
 describe('Test App', () => {
   let app: INestApplication;
-  let accessToken: string;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -16,93 +15,58 @@ describe('Test App', () => {
     await app.init();
   });
 
-  it('GET /', () => {
-    return request(app.getHttpServer())
-      .get('/')
-      .expect(200)
-      .expect('Hello World!');
+  describe('authenticate()', () => {
+    it('should return an error', () => {
+      return request(app.getHttpServer())
+        .get('/oauth/user')
+        .expect(401);
+    });
+
+    it('should authenticate the request', () => {
+      return request(app.getHttpServer())
+        .get('/oauth/user')
+        .set('Authorization', 'Bearer foobar')
+        .expect(200);
+    });
   });
 
-  it('GET /oauth/token', () => {
-    return request(app.getHttpServer())
-      .get('/oauth/token')
-      .expect(400)
-      .then((res) => {
-        expect(res.body.error).toBe('invalid_request');
-        expect(res.body.error_description).toBe(
-          'Invalid request: method must be POST',
-        );
-      });
+  describe('authorize()', () => {
+    it('should return an error', () => {
+      return request(app.getHttpServer())
+        .post('/oauth/authorize?state=foobiz')
+        .set('Authorization', 'Bearer foobar')
+        .send({ client_id: '12345' })
+        .expect(400)
+        .expect({ error: 'invalid_request', error_description: 'Missing parameter: `response_type`' });
+    });
+
+    it('should return a `location` header with the code', () => {
+      return request(app.getHttpServer())
+        .post('/oauth/authorize?state=foobiz')
+        .set('Authorization', 'Bearer foobar')
+        .send({ client_id: '12345', response_type: 'code' })
+        .expect(302)
+        .expect('Location', 'http://example.com/?code=123&state=foobiz');
+    });
   });
 
-  it('no header POST /oauth/token', () => {
-    return request(app.getHttpServer())
-      .post('/oauth/token')
-      .expect(400)
-      .then((res) => {
-        expect(res.body.error).toBe('invalid_request');
-        expect(res.body.error_description).toBe(
-          'Invalid request: content must be application/x-www-form-urlencoded',
-        );
-      });
-  });
+  describe('token()', () => {
+    it('should return an error', () => {
+      return request(app.getHttpServer())
+        .post('/oauth/token')
+        .set({ 'Content-Type': 'application/x-www-form-urlencoded', Authorization: 'Basic qazwsx' })
+        .send({ client_id: '12345', secret: 'secret', grant_type: 'authorization_code', code: '123' })
+        .expect(400)
+        .expect({ error: 'invalid_client', error_description: 'Invalid client: cannot retrieve client credentials' });
+    });
 
-  it('incorrect Authorization POST /oauth/token', () => {
-    return request(app.getHttpServer())
-      .post('/oauth/token')
-      .set({
-        'Content-Type': 'application/x-www-form-urlencoded',
-        Authorization: 'Basic qazwsx',
-      })
-      .send({
-        grant_type: 'password',
-        username: 'foo',
-        password: 'bar',
-      })
-      .expect(400)
-      .then((res) => {
-        expect(res.body.error).toBe('invalid_client');
-        expect(res.body.error_description).toBe(
-          'Invalid client: cannot retrieve client credentials',
-        );
-      });
-  });
-
-  it('correct Authorization POST /oauth/token', () => {
-    return request(app.getHttpServer())
-      .post('/oauth/token')
-      .set({
-        'Content-Type': 'application/x-www-form-urlencoded',
-        Authorization: 'Basic MTIzNDU6c2VjcmV0', // Basic base64(12345:secret)
-      })
-      .send({
-        grant_type: 'password',
-        username: 'foo',
-        password: 'bar',
-      })
-      .expect(200)
-      .then((res) => {
-        expect(res.body.token_type).toBe('Bearer');
-        accessToken = res.body.access_token;
-      });
-  });
-
-  it('incorrect GET /user', () => {
-    return request(app.getHttpServer())
-      .get('/user')
-      .expect(401)
-      .then((res) => {
-        expect(res.body.statusCode).toBe(401);
-        expect(res.body.message).toBe('Unauthorized');
-      });
-  });
-
-  it('correct GET /user', () => {
-    return request(app.getHttpServer())
-      .get('/user')
-      .set({
-        Authorization: `Bearer ${accessToken}`,
-      })
-      .expect(200);
+    it('should return an `access_token`', () => {
+      return request(app.getHttpServer())
+        .post('/oauth/token')
+        .set({ 'Content-Type': 'application/x-www-form-urlencoded', Authorization: 'Basic MTIzNDU6c2VjcmV0' }) // Basic base64(12345:secret)
+        .send({ client_id: '12345', secret: 'secret', grant_type: 'authorization_code', code: '123' })
+        .expect(200)
+        .expect({ access_token: 'foobar', token_type: 'Bearer' });
+    });
   });
 });
