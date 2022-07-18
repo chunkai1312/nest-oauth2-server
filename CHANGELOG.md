@@ -1,5 +1,13 @@
 # Changelog
 
+# [1.1.0](https://github.com/chunkai1312/nest-oauth2-server/compare/v1.0.0...v1.1.0) (2022-07-18)
+
+
+### Features
+
+* add decorator to set oauth2 server options metadata ([658c96a](https://github.com/chunkai1312/nest-oauth2-server/commit/658c96ad978970de9b187f32fe7eb64aadc4df39))
+* export guards ([aba32e3](https://github.com/chunkai1312/nest-oauth2-server/commit/aba32e3a4edd22dd2194829f3b332a2b2e82db0d))
+
 # 1.0.0 (2022-06-06)
 
 
