@@ -1,6 +1,6 @@
 {
   "name": "nest-oauth2-server",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "A Nest module wrapper for oauth2-server",
   "author": "Chun-Kai Wang <chunkai1312@gmail.com>",
   "keywords": [

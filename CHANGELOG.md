@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/chunkai1312/nest-oauth2-server/compare/v1.1.0...v1.1.1) (2022-12-08)
+
+
+### Bug Fixes
+
+* support for nest version 9 ([04b619f](https://github.com/chunkai1312/nest-oauth2-server/commit/04b619f332f52111741c26292f7396244866c305))
+
 # [1.1.0](https://github.com/chunkai1312/nest-oauth2-server/compare/v1.0.0...v1.1.0) (2022-07-18)
 
 
