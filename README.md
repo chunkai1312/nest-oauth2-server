@@ -147,5 +147,5 @@ A working example is available in [test](./test/app/) directory.
 
 [npm-image]: https://img.shields.io/npm/v/nest-oauth2-server.svg
 [npm-url]: https://npmjs.com/package/nest-oauth2-server
-[action-image]: https://img.shields.io/github/workflow/status/chunkai1312/nest-oauth2-server/Node.js%20CI
+[action-image]: https://img.shields.io/github/actions/workflow/status/chunkai1312/nest-oauth2-server/node.js.yml?branch=master
 [action-url]: https://github.com/chunkai1312/nest-oauth2-server/actions/workflows/node.js.yml
