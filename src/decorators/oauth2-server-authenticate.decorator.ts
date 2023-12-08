@@ -1,4 +1,4 @@
-import * as OAuth2Server from 'oauth2-server';
+import * as OAuth2Server from '@node-oauth/oauth2-server';
 import { UseGuards, SetMetadata, applyDecorators } from '@nestjs/common';
 import { OAuth2ServerAuthenticateGuard } from '../guards';
 import { OAUTH2_SERVER_OPTIONS_METADATA } from '../oauth2-server.constants';

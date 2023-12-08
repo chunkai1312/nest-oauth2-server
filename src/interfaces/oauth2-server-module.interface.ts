@@ -1,4 +1,4 @@
-import * as OAuth2Server from 'oauth2-server';
+import * as OAuth2Server from '@node-oauth/oauth2-server';
 import { ModuleMetadata, Type } from '@nestjs/common';
 
 export type OAuth2ServerModuleOptions = OAuth2Server.ServerOptions;
