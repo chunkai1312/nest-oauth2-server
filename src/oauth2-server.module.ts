@@ -1,13 +1,23 @@
 import { DynamicModule, Module, Provider, Global } from '@nestjs/common';
-import { OAuth2ServerModuleOptions, OAuth2ServerModuleAsyncOptions, OAuth2ServerOptionsFactory } from './interfaces';
+import {
+  OAuth2ServerModuleOptions,
+  OAuth2ServerModuleAsyncOptions,
+  OAuth2ServerOptionsFactory,
+} from './interfaces';
 import { OAUTH2_SERVER_OPTIONS } from './oauth2-server.constants';
-import { createOAuth2ServerProviders, OAuth2ServerInstanceProvider } from './oauth2-server.providers';
+import {
+  createOAuth2ServerProviders,
+  OAuth2ServerInstanceProvider,
+} from './oauth2-server.providers';
 
 @Global()
 @Module({})
 export class OAuth2ServerModule {
   static forRoot(options: OAuth2ServerModuleOptions): DynamicModule {
-    const providers = [...createOAuth2ServerProviders(options), OAuth2ServerInstanceProvider];
+    const providers = [
+      ...createOAuth2ServerProviders(options),
+      OAuth2ServerInstanceProvider,
+    ];
     return {
       module: OAuth2ServerModule,
       providers,
@@ -16,7 +26,10 @@ export class OAuth2ServerModule {
   }
 
   static forRootAsync(options: OAuth2ServerModuleAsyncOptions): DynamicModule {
-    const providers = [...this.createAsyncProviders(options), OAuth2ServerInstanceProvider];
+    const providers = [
+      ...this.createAsyncProviders(options),
+      OAuth2ServerInstanceProvider,
+    ];
     return {
       module: OAuth2ServerModule,
       imports: options.imports || [],
@@ -25,7 +38,9 @@ export class OAuth2ServerModule {
     };
   }
 
-  private static createAsyncProviders(options: OAuth2ServerModuleAsyncOptions): Provider[] {
+  private static createAsyncProviders(
+    options: OAuth2ServerModuleAsyncOptions,
+  ): Provider[] {
     if (options.useExisting || options.useFactory) {
       return [this.createAsyncOptionsProvider(options)];
     }
@@ -38,7 +53,9 @@ export class OAuth2ServerModule {
     ];
   }
 
-  private static createAsyncOptionsProvider(options: OAuth2ServerModuleAsyncOptions): Provider {
+  private static createAsyncOptionsProvider(
+    options: OAuth2ServerModuleAsyncOptions,
+  ): Provider {
     if (options.useFactory) {
       return {
         provide: OAUTH2_SERVER_OPTIONS,

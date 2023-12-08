@@ -4,7 +4,12 @@ import { OAuth2ServerGuard } from './oauth2-server.guard';
 
 @Injectable()
 export class OAuth2ServerAuthorizeGuard extends OAuth2ServerGuard {
-  protected async execute(context: ExecutionContext, request: OAuth2Server.Request, response: OAuth2Server.Response, options?: OAuth2Server.AuthorizeOptions): Promise<boolean> {
+  protected async execute(
+    context: ExecutionContext,
+    request: OAuth2Server.Request,
+    response: OAuth2Server.Response,
+    options?: OAuth2Server.AuthorizeOptions,
+  ): Promise<boolean> {
     try {
       const code = await this.oauthServer.authorize(request, response, options);
       const res = context.switchToHttp().getResponse();
