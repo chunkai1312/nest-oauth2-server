@@ -1,9 +1,14 @@
-import * as OAuth2Server from 'oauth2-server';
+import * as OAuth2Server from '@node-oauth/oauth2-server';
 import { Provider } from '@nestjs/common';
 import { OAuth2ServerModuleOptions } from './interfaces';
-import { OAUTH2_SERVER_INSTANCE, OAUTH2_SERVER_OPTIONS } from './oauth2-server.constants';
+import {
+  OAUTH2_SERVER_INSTANCE,
+  OAUTH2_SERVER_OPTIONS,
+} from './oauth2-server.constants';
 
-export function createOAuth2ServerProviders(options: OAuth2ServerModuleOptions): Provider[] {
+export function createOAuth2ServerProviders(
+  options: OAuth2ServerModuleOptions,
+): Provider[] {
   return [
     {
       provide: OAUTH2_SERVER_OPTIONS,

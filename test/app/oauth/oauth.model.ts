@@ -1,12 +1,20 @@
 import { Injectable } from '@nestjs/common';
-import { AuthorizationCodeModel, AuthorizationCode, Client, User, Token, Falsey } from 'oauth2-server';
+import {
+  AuthorizationCodeModel,
+  AuthorizationCode,
+  Client,
+  User,
+  Token,
+  Falsey,
+} from '@node-oauth/oauth2-server';
 
 @Injectable()
 export class OAuthModel implements AuthorizationCodeModel {
   private readonly db: any = {};
 
   constructor() {
-    this.db = { // Here is a fast overview of what your db model should look like
+    this.db = {
+      // Here is a fast overview of what your db model should look like
       authorizationCode: {
         authorizationCode: '', // A string that contains the code
         expiresAt: new Date(), // A date when the code expires
@@ -14,7 +22,8 @@ export class OAuthModel implements AuthorizationCodeModel {
         client: null, // See the client section
         user: null, // Whatever you want... This is where you can be flexible with the protocol
       },
-      client: { // Application wanting to authenticate with this server
+      client: {
+        // Application wanting to authenticate with this server
         clientId: '', // Unique string representing the client
         clientSecret: '', // Secret of the client; Can be null
         grants: [], // Array of grants that the client can use (ie, `authorization_code`)
@@ -26,10 +35,13 @@ export class OAuthModel implements AuthorizationCodeModel {
         client: null, // Client associated with this token
         user: null, // User associated with this token
       },
-    }
+    };
   }
 
-  async getClient(clientId: string, clientSecret: string): Promise<Client | Falsey> {
+  async getClient(
+    clientId: string,
+    clientSecret: string,
+  ): Promise<Client | Falsey> {
     this.db.client = {
       id: clientId,
       grants: ['authorization_code', 'refresh_token'],
@@ -38,7 +50,11 @@ export class OAuthModel implements AuthorizationCodeModel {
     return this.db.client;
   }
 
-  async saveToken(token: Token, client: Client, user: User): Promise<Token | Falsey> {
+  async saveToken(
+    token: Token,
+    client: Client,
+    user: User,
+  ): Promise<Token | Falsey> {
     this.db.token = {
       accessToken: 'foobar',
       client: client,
@@ -60,7 +76,11 @@ export class OAuthModel implements AuthorizationCodeModel {
     return this.db.token;
   }
 
-  async saveAuthorizationCode(code: AuthorizationCode, client: Client, user: User) {
+  async saveAuthorizationCode(
+    code: AuthorizationCode,
+    client: Client,
+    user: User,
+  ) {
     this.db.authorizationCode = {
       authorizationCode: '123',
       expiresAt: code.expiresAt,
@@ -70,7 +90,9 @@ export class OAuthModel implements AuthorizationCodeModel {
     return this.db.authorizationCode;
   }
 
-  async getAuthorizationCode(authorizationCode: string): Promise<AuthorizationCode | Falsey> {
+  async getAuthorizationCode(
+    authorizationCode: string,
+  ): Promise<AuthorizationCode | Falsey> {
     const codeExpires = new Date();
     codeExpires.setDate(codeExpires.getDate() + 1);
 

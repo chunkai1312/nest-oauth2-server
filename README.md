@@ -5,15 +5,14 @@
 
 Complete, compliant and well tested module for implementing an OAuth2 server with [Nest](https://github.com/nestjs/nest) in [Node.js](https://nodejs.org).
 
-This is the Nest module wrapper for [oauth2-server](https://github.com/oauthjs/node-oauth2-server).
+This is the Nest module wrapper for [@node-oauth/oauth2-server](https://github.com/node-oauth/node-oauth2-server).
 
 ## Installation
 
 To begin using it, we first install the required dependencies.
 
 ```bash
-$ npm install --save nest-oauth2-server oauth2-server
-$ npm install --save-dev @types/oauth2-server
+$ npm install --save nest-oauth2-server @node-oauth/oauth2-server
 ```
 
 ## Getting started
@@ -35,11 +34,11 @@ import { model } from './model';
 export class AppModule {}
 ```
 
-The `forRoot()` method accepts the same configuration object to create a new [OAuth2Server](https://oauth2-server.readthedocs.io/en/latest/api/oauth2-server.html#new-oauth2server-options) instance.
+The `forRoot()` method accepts the same configuration object to create a new [OAuth2Server](https://node-oauthoauth2-server.readthedocs.io/en/master/api/oauth2-server.html) instance.
 
 Note that [OAuth2Server](https://oauth2-server.readthedocs.io/en/latest/api/oauth2-server.html) requires a [model](https://oauth2-server.readthedocs.io/en/latest/model/overview.html) object through which some aspects or storage, retrieval and custom validation are abstracted. Therefore, in most cases you will need to use [async configuration](#async-configuration) to import your repository module for the model implementation.
 
-> The [model specification](https://oauth2-server.readthedocs.io/en/latest/model/spec.html) see documentation for details.
+> The [model specification](https://node-oauthoauth2-server.readthedocs.io/en/master/model/spec.html) see documentation for details.
 
 ## Decorators
 
