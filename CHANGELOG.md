@@ -1,5 +1,7 @@
 # Changelog
 
+## [2.0.1](https://github.com/chunkai1312/nest-oauth2-server/compare/v2.0.0...v2.0.1) (2023-12-09)
+
 # [2.0.0](https://github.com/chunkai1312/nest-oauth2-server/compare/v1.1.3...v2.0.0) (2023-12-09)
 
 
